@@ -48,6 +48,7 @@ makedepends=(
   'python'
   'range-v3'
   'tl-expected'
+  'libzip'
 )
 
 conflicts=("telegram-desktop")
