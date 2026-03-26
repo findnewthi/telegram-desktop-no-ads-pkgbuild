@@ -23,7 +23,7 @@ depends=(
   'libxrandr'
   'libxtst'
   'lz4'
-  'minizip'
+  'minizip-ng'
   'openal'
   'openh264'
   'openssl'
