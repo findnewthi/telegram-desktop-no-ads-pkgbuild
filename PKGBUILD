@@ -1,11 +1,12 @@
-# https://gitlab.archlinux.org/archlinux/packaging/packages/telegram-desktop
+# Based on Arch Linux telegram-desktop packaging.
 pkgname=telegram-desktop-no-ads
-pkgver=6.3.10
+pkgver=6.6.4
+_td_commit=0ae923c493bceb75433de2682ba8ae29cc7bf88d
 pkgrel=1
 pkgdesc='Patched Telegram Desktop client without ads'
 arch=('x86_64')
-url="https://desktop.telegram.org/"
-license=('GPL3')
+url='https://desktop.telegram.org/'
+license=('GPL-3.0-or-later WITH OpenSSL-exception')
 depends=(
   'abseil-cpp'
   'ada'
@@ -23,7 +24,11 @@ depends=(
   'libxrandr'
   'libxtst'
   'lz4'
-  'minizip-ng'
+  'minizip'
+  'zlib'
+  'libstdc++'
+  'glibc'
+  'libgcc'
   'openal'
   'openh264'
   'openssl'
@@ -49,46 +54,52 @@ makedepends=(
   'range-v3'
   'tl-expected'
 )
-
-conflicts=("telegram-desktop")
-_td_commit=6d74326c5ce53aeb52496f157f0080d9b8515970
-# Patches are from feature/remove-ads branch:
-# https://github.com/vehlwn/tdesktop/tree/feature/remove-ads
-# git format-patch upstream/dev..feature/remove-ads --stdout > remove-ads.patch
-source=(
-    "https://github.com/telegramdesktop/tdesktop/releases/download/v${pkgver}/tdesktop-${pkgver}-full.tar.gz"
-    "git+https://github.com/tdlib/td.git#tag=${_td_commit}"
-    "remove-ads.patch"
+optdepends=(
+  'geoclue: geoinformation support'
+  'crow-translate: translation provider'
+  'webkit2gtk-4.1: embedded browser features provided by webkit2gtk-4.1'
+  'webkitgtk-6.0: embedded browser features provided by webkitgtk-6.0 (Wayland only)'
+  'xdg-desktop-portal: desktop integration'
 )
-sha256sums=(
-    "SKIP"
-    "SKIP"
-    5527ad06db17dc1e4afab30e1b3e61a2b2915183c19fb618b6c791f29c8b9fa1
+provides=('telegram-desktop')
+conflicts=('telegram-desktop')
+source=(
+  "https://github.com/telegramdesktop/tdesktop/releases/download/v${pkgver}/tdesktop-${pkgver}-full.tar.gz"
+  "git+https://github.com/tdlib/td.git#tag=${_td_commit}"
+  'tdesktop-fix-minizip-includes.patch'
+  'remove-ads.patch'
+)
+sha512sums=(
+  '2665473471c694b4116b8f5e3aa663ab1da0606ddd658f5f637bb9845b27f1090fe559442a9841580cfe81739554f3e2d254e6d9ba754dca35ed7357f50c6862'
+  'bd299ce4cc85fac7567cefca9392820d97d9663560ebc990ba5d1b73f92f01ef43b1fe29c89082105679223b8a3bfb40c364266b9a6021ec001ab91452e810e1'
+  'd9765588e92f154d83b95dc2840207bf22b26b6ca37b4d5cdfdb5e27a00c9e1ebcc9cd475a96bbcc5b02c24f6892320e009f843aa6b172a1820814b952a772eb'
+  '58e0760cb8475aabac384d0e84eb72174fd4974c62b0854a2dac9e1e53a94bc45e2242ae68ee967ec0618939e008644b7ab0f65efa423ee97d424725a9402169'
 )
 
 prepare() {
-    cd tdesktop-$pkgver-full
-    patch --forward --strip=1 -i "${srcdir}/remove-ads.patch"
+  patch -Np1 -d "tdesktop-${pkgver}-full/Telegram/lib_base" -i "$srcdir/tdesktop-fix-minizip-includes.patch"
+  patch -Np1 -d "tdesktop-${pkgver}-full" -i "$srcdir/remove-ads.patch"
 }
 
 build() {
-    cmake -S td -B td/build \
-        -DCMAKE_BUILD_TYPE=None \
-        -DCMAKE_INSTALL_PREFIX="$PWD/td/install" \
-        -Wno-dev \
-        -DTD_E2E_ONLY=ON
-    cmake --build td/build
-    cmake --install td/build
+  cmake -S td -B td/build \
+    -DCMAKE_BUILD_TYPE=None \
+    -DCMAKE_INSTALL_PREFIX="$PWD/td/install" \
+    -Wno-dev \
+    -DTD_E2E_ONLY=ON
+  cmake --build td/build
+  cmake --install td/build
 
-    cmake -B build -S tdesktop-$pkgver-full -G Ninja \
-        -DCMAKE_INSTALL_PREFIX="/usr" \
-        -Dtde2e_DIR="$PWD/td/install/lib/cmake/tde2e" \
-        -DCMAKE_BUILD_TYPE=Release \
-        -DTDESKTOP_API_ID=611335 \
-        -DTDESKTOP_API_HASH=d524b414d21f4d37f08684c1df41ac9c
-    cmake --build build
+  cmake -B build -S "tdesktop-${pkgver}-full" -G Ninja \
+    -DCMAKE_VERBOSE_MAKEFILE=ON \
+    -DCMAKE_INSTALL_PREFIX='/usr' \
+    -Dtde2e_DIR="$PWD/td/install/lib/cmake/tde2e" \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DTDESKTOP_API_ID=611335 \
+    -DTDESKTOP_API_HASH=d524b414d21f4d37f08684c1df41ac9c
+  cmake --build build
 }
 
 package() {
-    DESTDIR="$pkgdir" cmake --install build
+  DESTDIR="$pkgdir" cmake --install build
 }
