@@ -1,20 +1,6 @@
-diff --git a/.gitignore b/.gitignore
-index 8547c2a..0a88a31 100644
---- a/.gitignore
-+++ b/.gitignore
-@@ -64,6 +64,7 @@ settings.local.json
- # Cursor IDE local settings (but keep .cursor/rules/)
- .cursor/*
- !.cursor/rules/
-+build/
- 
- # AI work folder (session-specific, not for version control)
- .ai
-diff --git a/Telegram/SourceFiles/apiwrap.cpp b/Telegram/SourceFiles/apiwrap.cpp
-index b7e86f2..4b7a919 100644
 --- a/Telegram/SourceFiles/apiwrap.cpp
 +++ b/Telegram/SourceFiles/apiwrap.cpp
-@@ -2187,7 +2187,7 @@ void ApiWrap::saveDraftsToCloud() {
+@@ -2195,7 +2195,7 @@
  
  		auto flags = MTPmessages_SaveDraft::Flags(0);
  		auto &textWithTags = cloudDraft->textWithTags;
@@ -23,7 +9,7 @@ index b7e86f2..4b7a919 100644
  			flags |= MTPmessages_SaveDraft::Flag::f_no_webpage;
  		} else if (!cloudDraft->webpage.url.isEmpty()) {
  			flags |= MTPmessages_SaveDraft::Flag::f_media;
-@@ -4048,8 +4048,7 @@ void ApiWrap::sendMessage(
+@@ -4060,8 +4060,7 @@
  			sendFlags |= MTPmessages_SendMessage::Flag::f_reply_to;
  			mediaFlags |= MTPmessages_SendMedia::Flag::f_reply_to;
  		}
@@ -33,11 +19,9 @@ index b7e86f2..4b7a919 100644
  		const auto manualWebPage = exactWebPage
  			&& !ignoreWebPage
  			&& (message.webPage.manual || (isLast && !isFirst));
-diff --git a/Telegram/SourceFiles/core/ui_integration.cpp b/Telegram/SourceFiles/core/ui_integration.cpp
-index ddfa3e2..b00fcf2 100644
 --- a/Telegram/SourceFiles/core/ui_integration.cpp
 +++ b/Telegram/SourceFiles/core/ui_integration.cpp
-@@ -371,10 +371,6 @@ std::shared_ptr<ClickHandler> UiIntegration::createLinkHandler(
+@@ -379,10 +379,6 @@
  		}
  	} break;
  
@@ -48,11 +32,9 @@ index ddfa3e2..b00fcf2 100644
  	case EntityType::Phone:
  		return (my && my->session)
  			? std::make_shared<PhoneClickHandler>(my->session, data.text)
-diff --git a/Telegram/SourceFiles/data/components/sponsored_messages.cpp b/Telegram/SourceFiles/data/components/sponsored_messages.cpp
-index 4e68421..d94a0d2 100644
 --- a/Telegram/SourceFiles/data/components/sponsored_messages.cpp
 +++ b/Telegram/SourceFiles/data/components/sponsored_messages.cpp
-@@ -239,17 +239,11 @@ void SponsoredMessages::inject(
+@@ -239,17 +239,11 @@
  }
  
  bool SponsoredMessages::canHaveFor(not_null<History*> history) const {
@@ -71,11 +53,9 @@ index 4e68421..d94a0d2 100644
  }
  
  bool SponsoredMessages::isTopBarFor(not_null<History*> history) const {
-diff --git a/Telegram/SourceFiles/data/data_peer.cpp b/Telegram/SourceFiles/data/data_peer.cpp
-index bd5c49c..60dbfdb 100644
 --- a/Telegram/SourceFiles/data/data_peer.cpp
 +++ b/Telegram/SourceFiles/data/data_peer.cpp
-@@ -1750,7 +1750,7 @@ Data::RestrictionCheckResult PeerData::amRestricted(
+@@ -1751,7 +1751,7 @@
  				: Result::Allowed())
  			: (right == ChatRestriction::PinMessages)
  			? ((user->flags() & UserDataFlag::CanPinMessages)
@@ -84,7 +64,7 @@ index bd5c49c..60dbfdb 100644
  				: Result::Explicit())
  			: Result::Allowed();
  	} else if (const auto channel = asChannel()) {
-@@ -1982,11 +1982,6 @@ const Data::WallPaper *PeerData::wallPaper() const {
+@@ -1983,11 +1983,6 @@
  }
  
  bool PeerData::hasActiveStories() const {
@@ -96,11 +76,9 @@ index bd5c49c..60dbfdb 100644
  	return false;
  }
  
-diff --git a/Telegram/SourceFiles/dialogs/dialogs_row.cpp b/Telegram/SourceFiles/dialogs/dialogs_row.cpp
-index 530923e..925c9a2 100644
 --- a/Telegram/SourceFiles/dialogs/dialogs_row.cpp
 +++ b/Telegram/SourceFiles/dialogs/dialogs_row.cpp
-@@ -425,7 +425,7 @@ void Row::PaintCornerBadgeFrame(
+@@ -403,7 +403,7 @@
  	q.translate(framePadding, framePadding);
  	auto hq = std::optional<PainterHighQualityEnabler>();
  	const auto photoSize = context.st->photoSize;
@@ -109,11 +87,9 @@ index 530923e..925c9a2 100644
  	if (storiesCount) {
  		hq.emplace(q);
  		const auto line = st::dialogsStoriesFull.lineTwice / 2.;
-diff --git a/Telegram/SourceFiles/dialogs/dialogs_widget.cpp b/Telegram/SourceFiles/dialogs/dialogs_widget.cpp
-index ac9bc08..f6f6183 100644
 --- a/Telegram/SourceFiles/dialogs/dialogs_widget.cpp
 +++ b/Telegram/SourceFiles/dialogs/dialogs_widget.cpp
-@@ -367,12 +367,7 @@ Widget::Widget(
+@@ -367,12 +367,7 @@
  	object_ptr<Ui::IconButton>(this, st::dialogsLock))
  , _scroll(this)
  , _scrollToTop(_scroll, st::dialogsToUp)
@@ -127,19 +103,17 @@ index ac9bc08..f6f6183 100644
  , _searchTimer([=] { search(); })
  , _peerSearch(&controller->session(), Api::PeerSearch::Type::WithSponsored)
  , _singleMessageSearch(&controller->session()) {
-@@ -723,7 +718,6 @@ Widget::Widget(
+@@ -723,7 +718,6 @@
  	}
  
  	setupFrozenAccountBar();
--	setupTopBarSuggestions(innerList);
+-	setupTopBarSuggestions();
  }
  
  void Widget::setupSwipeBack() {
-diff --git a/Telegram/SourceFiles/history/history_inner_widget.cpp b/Telegram/SourceFiles/history/history_inner_widget.cpp
-index c513b26..edd1205 100644
 --- a/Telegram/SourceFiles/history/history_inner_widget.cpp
 +++ b/Telegram/SourceFiles/history/history_inner_widget.cpp
-@@ -2457,8 +2457,7 @@ void HistoryInner::showContextMenu(QContextMenuEvent *e, bool showFromTouch) {
+@@ -2524,8 +2524,7 @@
  		return item;
  	};
  	const auto leaderOrSelf = groupLeaderOrSelf(_dragStateItem);
@@ -149,7 +123,7 @@ index c513b26..edd1205 100644
  	using namespace HistoryView::Reactions;
  	const auto clickedReaction = ReactionIdOfLink(link);
  	const auto linkPhoneNumber = link
-@@ -3363,12 +3362,12 @@ void HistoryInner::showContextMenu(QContextMenuEvent *e, bool showFromTouch) {
+@@ -3473,12 +3472,12 @@
  }
  
  bool HistoryInner::hasCopyRestriction(HistoryItem *item) const {
@@ -164,11 +138,9 @@ index c513b26..edd1205 100644
  }
  
  bool HistoryInner::showCopyRestriction(HistoryItem *item) {
-diff --git a/Telegram/SourceFiles/history/history_item.cpp b/Telegram/SourceFiles/history/history_item.cpp
-index b73ff70..faecb00 100644
 --- a/Telegram/SourceFiles/history/history_item.cpp
 +++ b/Telegram/SourceFiles/history/history_item.cpp
-@@ -322,34 +322,8 @@ std::unique_ptr<Data::Media> HistoryItem::CreateMedia(
+@@ -322,34 +322,8 @@
  		}, [](const MTPDdocumentEmpty &) -> Result {
  			return nullptr;
  		});
@@ -205,7 +177,7 @@ index b73ff70..faecb00 100644
  	}, [&](const MTPDmessageMediaGame &media) -> Result {
  		return media.vgame().match([&](const MTPDgame &game) {
  			return std::make_unique<Data::MediaGame>(
-@@ -2996,16 +2970,7 @@ void HistoryItem::translationDone(LanguageId to, TextWithEntities result) {
+@@ -3098,16 +3072,7 @@
  }
  
  bool HistoryItem::canReact() const {
@@ -223,7 +195,7 @@ index b73ff70..faecb00 100644
  }
  
  void HistoryItem::addPaidReaction(
-@@ -4483,6 +4448,7 @@ void HistoryItem::createComponentsHelper(HistoryItemCommonFields &&fields) {
+@@ -4601,6 +4566,7 @@
  }
  
  void HistoryItem::setReactions(const MTPMessageReactions *reactions) {
@@ -231,7 +203,7 @@ index b73ff70..faecb00 100644
  	Expects(!_reactions);
  
  	if (changeReactions(reactions) && _reactions->hasUnread()) {
-@@ -4491,6 +4457,7 @@ void HistoryItem::setReactions(const MTPMessageReactions *reactions) {
+@@ -4609,6 +4575,7 @@
  }
  
  void HistoryItem::updateReactions(const MTPMessageReactions *reactions) {
@@ -239,11 +211,9 @@ index b73ff70..faecb00 100644
  	const auto wasRecentUsers = LookupRecentUnreadReactedUsers(this);
  	const auto hadUnread = hasUnreadReaction();
  	const auto changed = changeReactions(reactions);
-diff --git a/Telegram/SourceFiles/history/history_widget.cpp b/Telegram/SourceFiles/history/history_widget.cpp
-index 4298281..6b3bc41 100644
 --- a/Telegram/SourceFiles/history/history_widget.cpp
 +++ b/Telegram/SourceFiles/history/history_widget.cpp
-@@ -5628,11 +5628,7 @@ bool HistoryWidget::isChoosingTheme() const {
+@@ -5756,11 +5756,7 @@
  }
  
  bool HistoryWidget::isMuteUnmute() const {
@@ -256,7 +226,7 @@ index 4298281..6b3bc41 100644
  }
  
  bool HistoryWidget::isSearching() const {
-@@ -5640,13 +5636,7 @@ bool HistoryWidget::isSearching() const {
+@@ -5768,13 +5764,7 @@
  }
  
  bool HistoryWidget::showRecordButton() const {
@@ -271,7 +241,7 @@ index 4298281..6b3bc41 100644
  }
  
  bool HistoryWidget::showInlineBotCancel() const {
-@@ -8061,7 +8051,7 @@ void HistoryWidget::checkPinnedBarState() {
+@@ -8242,7 +8232,7 @@
  		}
  		return;
  	}
@@ -280,11 +250,9 @@ index 4298281..6b3bc41 100644
  		return;
  	}
  
-diff --git a/Telegram/SourceFiles/history/view/controls/history_view_compose_controls.cpp b/Telegram/SourceFiles/history/view/controls/history_view_compose_controls.cpp
-index 94c6256..5c9c9b9 100644
 --- a/Telegram/SourceFiles/history/view/controls/history_view_compose_controls.cpp
 +++ b/Telegram/SourceFiles/history/view/controls/history_view_compose_controls.cpp
-@@ -2196,13 +2196,7 @@ void ComposeControls::orderControls() {
+@@ -2229,13 +2229,7 @@
  }
  
  bool ComposeControls::showRecordButton() const {
@@ -299,11 +267,9 @@ index 94c6256..5c9c9b9 100644
  }
  
  bool ComposeControls::showEditStarsButton() const {
-diff --git a/Telegram/SourceFiles/history/view/controls/history_view_webpage_processor.cpp b/Telegram/SourceFiles/history/view/controls/history_view_webpage_processor.cpp
-index feb0a5e..818f4a4 100644
 --- a/Telegram/SourceFiles/history/view/controls/history_view_webpage_processor.cpp
 +++ b/Telegram/SourceFiles/history/view/controls/history_view_webpage_processor.cpp
-@@ -350,8 +350,7 @@ void WebpageProcessor::checkNow(bool force) {
+@@ -350,8 +350,7 @@
  }
  
  void WebpageProcessor::checkPreview() {
@@ -313,11 +279,9 @@ index feb0a5e..818f4a4 100644
  	if (_parsedLinks.empty()) {
  		_draft.removed = false;
  	}
-diff --git a/Telegram/SourceFiles/history/view/history_view_context_menu.cpp b/Telegram/SourceFiles/history/view/history_view_context_menu.cpp
-index ec5f243..61250d8 100644
 --- a/Telegram/SourceFiles/history/view/history_view_context_menu.cpp
 +++ b/Telegram/SourceFiles/history/view/history_view_context_menu.cpp
-@@ -1292,8 +1292,7 @@ base::unique_qptr<Ui::PopupMenu> FillContextMenu(
+@@ -1344,8 +1344,7 @@
  		: nullptr;
  	const auto hasSelection = !request.selectedItems.empty()
  		|| !request.selectedText.empty();
@@ -325,13 +289,11 @@ index ec5f243..61250d8 100644
 -		&& Api::WhoReactedExists(item, Api::WhoReactedList::All);
 +	const auto hasWhoReactedItem = false;
  
- 	auto result = base::make_unique_q<Ui::PopupMenu>(
- 		list,
-diff --git a/Telegram/SourceFiles/history/view/history_view_list_widget.cpp b/Telegram/SourceFiles/history/view/history_view_list_widget.cpp
-index 01d49df..f10ad99 100644
+ 	AddReplyToMessageAction(result, request, list);
+ 	if (item) {
 --- a/Telegram/SourceFiles/history/view/history_view_list_widget.cpp
 +++ b/Telegram/SourceFiles/history/view/history_view_list_widget.cpp
-@@ -1614,39 +1614,19 @@ bool ListWidget::isEmpty() const {
+@@ -1610,39 +1610,19 @@
  }
  
  bool ListWidget::hasCopyRestriction(HistoryItem *item) const {
@@ -375,11 +337,9 @@ index 01d49df..f10ad99 100644
  }
  
  bool ListWidget::hasCopyRestrictionForSelected() const {
-diff --git a/Telegram/SourceFiles/history/view/history_view_reply.cpp b/Telegram/SourceFiles/history/view/history_view_reply.cpp
-index 04a4cae..27df177 100644
 --- a/Telegram/SourceFiles/history/view/history_view_reply.cpp
 +++ b/Telegram/SourceFiles/history/view/history_view_reply.cpp
-@@ -782,9 +782,7 @@ void Reply::paint(
+@@ -827,9 +827,7 @@
  	const auto &quoteSt = _hasQuoteIcon
  		? st::messageTextStyle.blockquote
  		: st::messageQuoteStyle;
@@ -390,11 +350,9 @@ index 04a4cae..27df177 100644
  	const auto backgroundEmojiCache = !backgroundEmojiData
  		? nullptr
  		: useColorCollectible
-diff --git a/Telegram/SourceFiles/history/view/history_view_top_bar_widget.cpp b/Telegram/SourceFiles/history/view/history_view_top_bar_widget.cpp
-index ec00358..6da18fb 100644
 --- a/Telegram/SourceFiles/history/view/history_view_top_bar_widget.cpp
 +++ b/Telegram/SourceFiles/history/view/history_view_top_bar_widget.cpp
-@@ -1272,31 +1272,12 @@ void TopBarWidget::updateControlsVisibility() {
+@@ -1304,31 +1304,12 @@
  		&& !isOneColumn
  		&& _controller->canShowThirdSection()
  		&& !_chooseForReportReason);
@@ -429,11 +387,9 @@ index ec00358..6da18fb 100644
  	_groupCall->setVisible(historyMode
  		&& groupCallsEnabled
  		&& !_chooseForReportReason);
-diff --git a/Telegram/SourceFiles/info/profile/info_profile_widget.cpp b/Telegram/SourceFiles/info/profile/info_profile_widget.cpp
-index d9d24be..a44c04e 100644
 --- a/Telegram/SourceFiles/info/profile/info_profile_widget.cpp
 +++ b/Telegram/SourceFiles/info/profile/info_profile_widget.cpp
-@@ -207,10 +207,6 @@ rpl::producer<QString> Widget::title() {
+@@ -207,10 +207,6 @@
  }
  
  rpl::producer<Dialogs::Stories::Content> Widget::titleStories() {
@@ -444,11 +400,9 @@ index d9d24be..a44c04e 100644
  	return nullptr;
  }
  
-diff --git a/Telegram/SourceFiles/media/view/media_view_overlay_widget.cpp b/Telegram/SourceFiles/media/view/media_view_overlay_widget.cpp
-index 1f8c0e3..602fdd3 100644
 --- a/Telegram/SourceFiles/media/view/media_view_overlay_widget.cpp
 +++ b/Telegram/SourceFiles/media/view/media_view_overlay_widget.cpp
-@@ -1144,16 +1144,7 @@ QSize OverlayWidget::flipSizeByRotation(QSize size) const {
+@@ -1187,16 +1187,7 @@
  }
  
  bool OverlayWidget::hasCopyMediaRestriction(bool skipPremiumCheck) const {
@@ -466,11 +420,9 @@ index 1f8c0e3..602fdd3 100644
  }
  
  bool OverlayWidget::showCopyMediaRestriction(bool skipPRemiumCheck) {
-diff --git a/Telegram/SourceFiles/ui/chat/chat_style.h b/Telegram/SourceFiles/ui/chat/chat_style.h
-index 0a09b0d..ca647f4 100644
 --- a/Telegram/SourceFiles/ui/chat/chat_style.h
 +++ b/Telegram/SourceFiles/ui/chat/chat_style.h
-@@ -36,7 +36,7 @@ inline constexpr auto kColorPatternsCount = Text::kMaxQuoteOutlines;
+@@ -36,7 +36,7 @@
  inline constexpr auto kColorIndexCount = uint8(1 << 6);
  inline constexpr auto kSimpleColorIndexCount = uint8(7);
  
