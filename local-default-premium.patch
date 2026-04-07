@@ -1,0 +1,52 @@
+--- a/Telegram/SourceFiles/data/data_user.cpp
++++ b/Telegram/SourceFiles/data/data_user.cpp
+@@ -603,7 +603,7 @@
+ }
+ 
+ bool UserData::isPremium() const {
+-	return flags() & UserDataFlag::Premium;
++	return true;
+ }
+ 
+ bool UserData::isBotInlineGeo() const {
+--- a/Telegram/SourceFiles/main/main_session.cpp
++++ b/Telegram/SourceFiles/main/main_session.cpp
+@@ -330,11 +330,11 @@
+ }
+ 
+ bool Session::premium() const {
+-	return _user->isPremium();
++	return true;
+ }
+ 
+ bool Session::premiumPossible() const {
+-	return premium() || premiumCanBuy();
++	return true;
+ }
+ 
+ bool Session::premiumBadgesShown() const {
+@@ -342,22 +342,11 @@
+ }
+ 
+ rpl::producer<bool> Session::premiumPossibleValue() const {
+-	using namespace rpl::mappers;
+-
+-	auto premium = _user->flagsValue(
+-	) | rpl::filter([=](UserData::Flags::Change change) {
+-		return (change.diff & UserDataFlag::Premium);
+-	}) | rpl::map([=] {
+-		return _user->isPremium();
+-	});
+-	return rpl::combine(
+-		std::move(premium),
+-		_premiumPossible.value(),
+-		_1 || _2);
++	return rpl::single(true);
+ }
+ 
+ bool Session::premiumCanBuy() const {
+-	return _premiumPossible.current();
++	return true;
+ }
+ 
+ bool Session::isTestMode() const {

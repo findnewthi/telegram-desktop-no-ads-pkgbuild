@@ -69,17 +69,20 @@ source=(
   "git+https://github.com/tdlib/td.git#tag=${_td_commit}"
   'tdesktop-fix-minizip-includes.patch'
   'remove-ads.patch'
+  'local-default-premium.patch'
 )
 sha512sums=(
   '79c1280fe2ec6c20036cc2ae8f8a2241567526b007dc565fb8cf5b839e5ecc0e9d0b80bc5a989486b983eb964f759525982d1d4a213bd064c5c3c238894530b1'
   'd622b8f3580ee49415546d025c4ba45f5b2de50b315fc379dc57c0427c5f815c7cc3820cca937c12182ee461641bb61f87ebc99b6c74a1a666cea9a08f0f41a0'
   'd9765588e92f154d83b95dc2840207bf22b26b6ca37b4d5cdfdb5e27a00c9e1ebcc9cd475a96bbcc5b02c24f6892320e009f843aa6b172a1820814b952a772eb'
   '1e3399f52fa1bff073c048654927cf5097c8f00ff0d9746cabe2bd7528a0ae87761db02c0a6cc3ec223854d9c9fddd96b10507ec2b40c333eae21a28e399a109'
+  '78265a9bde9861b9a464aa89dd162aa8a08f4d8f39dd090bdf5981b9f839ed7086f44ef6268f8686f27389c809696d4f7e5f3ad13bd68767f45942786a37abe5'
 )
 
 prepare() {
   patch -Np1 -d "tdesktop-${pkgver}-full/Telegram/lib_base" -i "$srcdir/tdesktop-fix-minizip-includes.patch"
   patch -Np1 -d "tdesktop-${pkgver}-full" -i "$srcdir/remove-ads.patch"
+  patch -Np1 -d "tdesktop-${pkgver}-full" -i "$srcdir/local-default-premium.patch"
 }
 
 build() {
